@@ -83,40 +83,20 @@ WSGI_APPLICATION = 'HRMS.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-# Check if we're in production (Render) or development
-DATABASE_URL = os.environ.get('DATABASE_URL')
-
-if DATABASE_URL:
-    # Production: Use dj_database_url to parse the DATABASE_URL
-    try:
-        import dj_database_url
-        DATABASES = {
-            'default': dj_database_url.parse(DATABASE_URL)
-        }
-    except ImportError:
-        # Fallback if dj_database_url is not available
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.postgresql',
-                'NAME': 'hrms_ym49',
-                'USER': 'hrms_ym49_user',
-                'PASSWORD': 'qlNd1IbNZhHIcDaAxSZzkD7kLQoz13NU',
-                'HOST': 'dpg-d5uttsiqcgvc7395il6g-a.oregon-postgres.render.com',
-                'PORT': '5432',
-            }
-        }
-else:
-    # Development: Use local PostgreSQL or SQLite
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'HRMS',
-            'USER': 'postgres',
-            'PASSWORD': 'root',
-            'HOST': 'localhost',
-            'PORT': '5432',
-        }
+# Always use the live Render PostgreSQL database
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'hrms_ym49',
+        'USER': 'hrms_ym49_user',
+        'PASSWORD': 'qlNd1IbNZhHIcDaAxSZzkD7kLQoz13NU',
+        'HOST': 'dpg-d5uttsiqcgvc7395il6g-a.oregon-postgres.render.com',
+        'PORT': '5432',
+        'OPTIONS': {
+            'sslmode': 'require',
+        },
     }
+}
 
 
 # Password validation
