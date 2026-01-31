@@ -208,6 +208,40 @@ curl -X POST http://127.0.0.1:8000/api/attendance/ \
 - **Lazy Loading**: Content loads as needed
 - **Minimal JavaScript**: Vanilla JS for optimal performance
 
+## 🚀 Deployment on Render
+
+This project is configured for easy deployment on Render with PostgreSQL database.
+
+### Quick Deploy Steps:
+1. **Push to GitHub**: Ensure your code is in a GitHub repository
+2. **Create Render Account**: Sign up at https://render.com
+3. **Create Web Service**: Connect your GitHub repo to Render
+4. **Configure Environment Variables**:
+   ```
+   DATABASE_URL = postgresql://hrms_ym49_user:qlNd1IbNZhHIcDaAxSZzkD7kLQoz13NU@dpg-d5uttsiqcgvc7395il6g-a.oregon-postgres.render.com/hrms_ym49
+   SECRET_KEY = [Generate new secret key]
+   DEBUG = false
+   ```
+5. **Deploy**: Render will automatically build and deploy your application
+
+### Deployment Files Included:
+- `requirements.txt` - Python dependencies
+- `build.sh` - Build script for Render
+- `Procfile` - Process configuration
+- `render.yaml` - Render deployment configuration
+- `DEPLOYMENT.md` - Detailed deployment guide
+
+### Production Features:
+- ✅ PostgreSQL database configured
+- ✅ WhiteNoise for static file serving
+- ✅ Gunicorn WSGI server
+- ✅ Environment-based configuration
+- ✅ Security settings for production
+- ✅ HTTPS enforcement
+- ✅ Static file compression
+
+**Live Demo**: [Will be available after deployment]
+
 ## Production Considerations
 
 For production deployment:
