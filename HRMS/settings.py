@@ -87,10 +87,10 @@ WSGI_APPLICATION = 'HRMS.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'hrms_ym49',
-        'USER': 'hrms_ym49_user',
-        'PASSWORD': 'qlNd1IbNZhHIcDaAxSZzkD7kLQoz13NU',
-        'HOST': 'dpg-d5uttsiqcgvc7395il6g-a.oregon-postgres.render.com',
+        'NAME': 'hrms_db_g9dt',
+        'USER': 'hrms_db_g9dt_user',
+        'PASSWORD': 'KoqPOooyNXFDx9TjMicmUs9epCR5ZVGe',
+        'HOST': 'dpg-d6q13g24d50c739if5qg-a.oregon-postgres.render.com',
         'PORT': '5432',
         'OPTIONS': {
             'sslmode': 'require',
@@ -179,3 +179,4 @@ if not DEBUG:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+
