@@ -90,7 +90,7 @@ DATABASES = {
         'NAME': 'hrms_db_g9dt',
         'USER': 'hrms_db_g9dt_user',
         'PASSWORD': 'KoqPOooyNXFDx9TjMicmUs9epCR5ZVGe',
-        'HOST': 'dpg-d6q13g24d50c739if5qg-a.oregon-postgres.render.com',
+        'HOST': 'dpg-d6q13g24d50c739if5qg-a',
         'PORT': '5432',
         'OPTIONS': {
             'sslmode': 'require',
@@ -179,5 +179,6 @@ if not DEBUG:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+
 
 
