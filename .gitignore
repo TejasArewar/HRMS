@@ -1,2 +1,11 @@
 /.vscode
 /myenv
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+db.sqlite3
+*.sqlite3
+staticfiles/
+.env
+*.log
