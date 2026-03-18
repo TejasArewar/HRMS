@@ -3,439 +3,385 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HRMS Lite - Employee Management System</title>
+    <title>HRMS Lite — Employee Management</title>
     <link rel="stylesheet" href="/static/css/styles.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <meta name="csrf-token" content="{{ csrf_token }}">
 </head>
 <body>
-    <div class="app-container">
-        <!-- Header -->
-        <header class="header">
-            <div class="header-content">
-                <div class="header-left">
-                    <i class="fas fa-users header-icon"></i>
-                    <div class="header-text">
-                        <h1>HRMS Lite</h1>
-                        <p>Employee Management & Attendance Tracking</p>
-                    </div>
-                </div>
-                <div class="header-right">
-                    <div class="stats-container">
-                        <div class="stat-item">
-                            <i class="fas fa-user-tie"></i>
-                            <span id="total-employees">0</span>
-                            <small>Employees</small>
-                        </div>
-                        <div class="stat-item">
-                            <i class="fas fa-calendar-check"></i>
-                            <span id="total-attendance">0</span>
-                            <small>Records</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </header>
 
-        <!-- Navigation -->
-        <nav class="nav-tabs">
-            <button class="tab-btn active" data-tab="dashboard">
-                <i class="fas fa-chart-pie"></i>
-                <span>Dashboard</span>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon"><i class="fas fa-layer-group"></i></div>
+            <div class="brand-text">
+                <span class="brand-name">HRMS Lite</span>
+                <span class="brand-sub">Management System</span>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <button class="nav-item active" data-tab="dashboard">
+                <span class="nav-icon"><i class="fas fa-chart-pie"></i></span>
+                <span class="nav-label">Dashboard</span>
+                <span class="nav-indicator"></span>
             </button>
-            <button class="tab-btn" data-tab="employees">
-                <i class="fas fa-users"></i>
-                <span>Employee Management</span>
+            <button class="nav-item" data-tab="employees">
+                <span class="nav-icon"><i class="fas fa-users"></i></span>
+                <span class="nav-label">Employees</span>
+                <span class="nav-indicator"></span>
             </button>
-            <button class="tab-btn" data-tab="attendance">
-                <i class="fas fa-calendar-alt"></i>
-                <span>Attendance Management</span>
+            <button class="nav-item" data-tab="attendance">
+                <span class="nav-icon"><i class="fas fa-calendar-check"></i></span>
+                <span class="nav-label">Attendance</span>
+                <span class="nav-indicator"></span>
             </button>
         </nav>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Loading Indicator -->
-            <div id="loading" class="loading hidden">
-                <div class="spinner"></div>
-                <span>Loading...</span>
-            </div>
-
-            <!-- Messages -->
-            <div id="error-message" class="message error-message hidden">
-                <i class="fas fa-exclamation-circle"></i>
-                <span class="message-text"></span>
-                <button class="message-close">&times;</button>
-            </div>
-            <div id="success-message" class="message success-message hidden">
-                <i class="fas fa-check-circle"></i>
-                <span class="message-text"></span>
-                <button class="message-close">&times;</button>
-            </div>
-
-            <!-- Dashboard Tab -->
-            <div id="dashboard-tab" class="tab-content active">
-                <div class="dashboard-grid">
-                    <!-- Summary Cards -->
-                    <div class="summary-cards">
-                        <div class="summary-card">
-                            <div class="summary-icon">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <div class="summary-content">
-                                <h3 id="dashboard-total-employees">0</h3>
-                                <p>Total Employees</p>
-                            </div>
-                        </div>
-                        
-                        <div class="summary-card">
-                            <div class="summary-icon success">
-                                <i class="fas fa-user-check"></i>
-                            </div>
-                            <div class="summary-content">
-                                <h3 id="dashboard-present-today">0</h3>
-                                <p>Present Today</p>
-                            </div>
-                        </div>
-                        
-                        <div class="summary-card">
-                            <div class="summary-icon error">
-                                <i class="fas fa-user-times"></i>
-                            </div>
-                            <div class="summary-content">
-                                <h3 id="dashboard-absent-today">0</h3>
-                                <p>Absent Today</p>
-                            </div>
-                        </div>
-                        
-                        <div class="summary-card">
-                            <div class="summary-icon info">
-                                <i class="fas fa-percentage"></i>
-                            </div>
-                            <div class="summary-content">
-                                <h3 id="dashboard-attendance-rate">0%</h3>
-                                <p>Attendance Rate</p>
-                            </div>
-                        </div>
+        <div class="sidebar-footer">
+            <div class="sidebar-stats">
+                <div class="ss-item">
+                    <i class="fas fa-user-tie"></i>
+                    <div>
+                        <span id="total-employees">0</span>
+                        <small>Employees</small>
                     </div>
-
-                    <!-- Employee Attendance Summary -->
-                    <div class="section card">
-                        <div class="section-header">
-                            <h2><i class="fas fa-chart-bar"></i> Employee Attendance Summary</h2>
-                            <div class="section-actions">
-                                <div class="filter-group">
-                                    <label for="dashboard-month-filter">
-                                        <i class="fas fa-calendar"></i>
-                                        Month
-                                    </label>
-                                    <select id="dashboard-month-filter">
-                                        <option value="">Current Month</option>
-                                    </select>
-                                </div>
-                                <button id="refresh-dashboard" class="btn btn-primary btn-small">
-                                    <i class="fas fa-sync-alt"></i>
-                                    Refresh
-                                </button>
-                            </div>
-                        </div>
-                        <div class="table-container">
-                            <table id="dashboard-summary-table" class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Employee ID</th>
-                                        <th>Employee Name</th>
-                                        <th>Department</th>
-                                        <th>Total Days</th>
-                                        <th>Present Days</th>
-                                        <th>Absent Days</th>
-                                        <th>Attendance Rate</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="dashboard-summary-tbody">
-                                    <!-- Summary rows will be populated here -->
-                                </tbody>
-                            </table>
-                            <div id="dashboard-summary-empty" class="empty-state hidden">
-                                <i class="fas fa-chart-bar"></i>
-                                <h3>No attendance data found</h3>
-                                <p>Start marking attendance to see the summary</p>
-                            </div>
-                        </div>
+                </div>
+                <div class="ss-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <div>
+                        <span id="total-attendance">0</span>
+                        <small>Records</small>
                     </div>
+                </div>
+            </div>
+        </div>
+    </aside>
 
-                    <!-- Recent Activity -->
-                    <div class="section card">
-                        <div class="section-header">
-                            <h2><i class="fas fa-clock"></i> Recent Activity</h2>
-                        </div>
-                        <div class="activity-list" id="recent-activity-list">
-                            <!-- Recent activity items will be populated here -->
-                        </div>
-                        <div id="recent-activity-empty" class="empty-state hidden">
-                            <i class="fas fa-clock"></i>
-                            <h3>No recent activity</h3>
-                            <p>Recent attendance records will appear here</p>
-                        </div>
+    <!-- Mobile top bar -->
+    <header class="topbar">
+        <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="topbar-brand">
+            <i class="fas fa-layer-group"></i>
+            <span>HRMS Lite</span>
+        </div>
+        <div class="topbar-right">
+            <div class="topbar-stat"><i class="fas fa-user-tie"></i><span id="topbar-employees">0</span></div>
+        </div>
+    </header>
+
+    <!-- Overlay for mobile -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- Main content -->
+    <main class="main" id="main">
+
+        <!-- Toast notifications -->
+        <div class="toast-container" id="toast-container"></div>
+
+        <!-- Global loading bar -->
+        <div class="loading-bar" id="loading-bar"></div>
+
+        <!-- ── DASHBOARD TAB ── -->
+        <section class="tab-panel active" id="dashboard-tab">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Dashboard</h1>
+                    <p class="page-sub">Overview of your workforce</p>
+                </div>
+                <div class="page-actions">
+                    <div class="select-wrap">
+                        <i class="fas fa-calendar"></i>
+                        <select id="dashboard-month-filter">
+                            <option value="">Current Month</option>
+                        </select>
                     </div>
-
-
+                    <button id="refresh-dashboard" class="btn btn-ghost btn-icon" title="Refresh">
+                        <i class="fas fa-rotate-right"></i>
+                    </button>
                 </div>
             </div>
 
-            <!-- Employee Management Tab -->
-            <div id="employees-tab" class="tab-content">
-                <div class="section card">
-                    <div class="section-header">
-                        <h2><i class="fas fa-user-plus"></i> Add New Employee</h2>
-                        <p>Fill in the details to add a new employee to the system</p>
+            <!-- KPI cards -->
+            <div class="kpi-grid">
+                <div class="kpi-card kpi-blue">
+                    <div class="kpi-icon"><i class="fas fa-users"></i></div>
+                    <div class="kpi-body">
+                        <span class="kpi-value" id="dashboard-total-employees">0</span>
+                        <span class="kpi-label">Total Employees</span>
                     </div>
-                    <form id="employee-form" class="form">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="employee-id">
-                                    <i class="fas fa-id-badge"></i>
-                                    Employee ID *
-                                </label>
-                                <input type="text" id="employee-id" name="employee_id" required placeholder="e.g., EMP001">
-                            </div>
-                            <div class="form-group">
-                                <label for="full-name">
-                                    <i class="fas fa-user"></i>
-                                    Full Name *
-                                </label>
-                                <input type="text" id="full-name" name="full_name" required placeholder="e.g., John Doe">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="email">
-                                    <i class="fas fa-envelope"></i>
-                                    Email *
-                                </label>
-                                <input type="email" id="email" name="email" required placeholder="e.g., john.doe@company.com">
-                            </div>
-                            <div class="form-group">
-                                <label for="department">
-                                    <i class="fas fa-building"></i>
-                                    Department *
-                                </label>
-                                <input type="text" id="department" name="department" required placeholder="e.g., Engineering">
-                            </div>
-                        </div>
-                        <div class="form-actions">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-plus"></i>
-                                Add Employee
-                            </button>
-                        </div>
-                    </form>
+                    <div class="kpi-bg-icon"><i class="fas fa-users"></i></div>
                 </div>
-
-                <div class="section card">
-                    <div class="section-header">
-                        <h2><i class="fas fa-list"></i> Employee List</h2>
-                        <div class="section-actions">
-                            <div class="search-box">
-                                <i class="fas fa-search"></i>
-                                <input type="text" id="employee-search" placeholder="Search employees...">
-                            </div>
-                        </div>
+                <div class="kpi-card kpi-green">
+                    <div class="kpi-icon"><i class="fas fa-user-check"></i></div>
+                    <div class="kpi-body">
+                        <span class="kpi-value" id="dashboard-present-today">0</span>
+                        <span class="kpi-label">Present Today</span>
                     </div>
-                    <div class="table-container">
-                        <table id="employees-table" class="table">
+                    <div class="kpi-bg-icon"><i class="fas fa-user-check"></i></div>
+                </div>
+                <div class="kpi-card kpi-red">
+                    <div class="kpi-icon"><i class="fas fa-user-times"></i></div>
+                    <div class="kpi-body">
+                        <span class="kpi-value" id="dashboard-absent-today">0</span>
+                        <span class="kpi-label">Absent Today</span>
+                    </div>
+                    <div class="kpi-bg-icon"><i class="fas fa-user-times"></i></div>
+                </div>
+                <div class="kpi-card kpi-purple">
+                    <div class="kpi-icon"><i class="fas fa-percent"></i></div>
+                    <div class="kpi-body">
+                        <span class="kpi-value" id="dashboard-attendance-rate">0%</span>
+                        <span class="kpi-label">Attendance Rate</span>
+                    </div>
+                    <div class="kpi-bg-icon"><i class="fas fa-percent"></i></div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <!-- Employee summary table -->
+                <div class="card span-2">
+                    <div class="card-header">
+                        <h2><i class="fas fa-chart-bar"></i> Attendance Summary</h2>
+                    </div>
+                    <div class="table-wrap">
+                        <table class="table" id="dashboard-summary-table">
                             <thead>
                                 <tr>
-                                    <th>Employee ID</th>
-                                    <th>Full Name</th>
-                                    <th>Email</th>
+                                    <th>ID</th>
+                                    <th>Name</th>
                                     <th>Department</th>
-                                    <th>Created At</th>
-                                    <th>Actions</th>
+                                    <th>Total</th>
+                                    <th>Present</th>
+                                    <th>Absent</th>
+                                    <th>Rate</th>
                                 </tr>
                             </thead>
-                            <tbody id="employees-tbody">
-                                <!-- Employee rows will be populated here -->
-                            </tbody>
+                            <tbody id="dashboard-summary-tbody"></tbody>
                         </table>
-                        <div id="employees-empty" class="empty-state hidden">
-                            <i class="fas fa-users"></i>
-                            <h3>No employees found</h3>
-                            <p>Add your first employee using the form above</p>
-                        </div>
-                    </div>
-                    <!-- Pagination for Employees -->
-                    <div id="employees-pagination" class="pagination-container hidden">
-                        <div class="pagination-info">
-                            <span id="employees-pagination-info">Showing 0 of 0 employees</span>
-                        </div>
-                        <div class="pagination-controls">
-                            <button id="employees-prev-btn" class="pagination-btn" disabled>
-                                <i class="fas fa-chevron-left"></i>
-                                Previous
-                            </button>
-                            <div id="employees-page-numbers" class="page-numbers"></div>
-                            <button id="employees-next-btn" class="pagination-btn" disabled>
-                                Next
-                                <i class="fas fa-chevron-right"></i>
-                            </button>
+                        <div id="dashboard-summary-empty" class="empty-state hidden">
+                            <div class="empty-icon"><i class="fas fa-chart-bar"></i></div>
+                            <h3>No attendance data yet</h3>
+                            <p>Start marking attendance to see the summary here</p>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Attendance Management Tab -->
-            <div id="attendance-tab" class="tab-content">
-                <div class="section card">
-                    <div class="section-header">
-                        <h2><i class="fas fa-calendar-plus"></i> Mark Attendance</h2>
-                        <p>Record daily attendance for employees</p>
+                <!-- Recent activity -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-clock-rotate-left"></i> Recent Activity</h2>
                     </div>
-                    <form id="attendance-form" class="form">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="attendance-employee">
-                                    <i class="fas fa-user"></i>
-                                    Employee *
-                                </label>
-                                <select id="attendance-employee" name="employee_id" required>
-                                    <option value="">Select Employee</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="attendance-date">
-                                    <i class="fas fa-calendar"></i>
-                                    Date *
-                                </label>
-                                <input type="date" id="attendance-date" name="date" required>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="attendance-status">
-                                    <i class="fas fa-check-circle"></i>
-                                    Status *
-                                </label>
-                                <select id="attendance-status" name="status" required>
-                                    <option value="">Select Status</option>
-                                    <option value="Present">Present</option>
-                                    <option value="Absent">Absent</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <!-- Empty for alignment -->
-                            </div>
-                        </div>
-                        <div class="form-actions">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-check"></i>
-                                Mark Attendance
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
-                <div class="section card">
-                    <div class="section-header">
-                        <h2><i class="fas fa-calendar-alt"></i> Attendance Records</h2>
-                        <div class="section-actions">
-                            <div class="filter-group">
-                                <label for="filter-employee">
-                                    <i class="fas fa-filter"></i>
-                                    Filter by Employee
-                                </label>
-                                <select id="filter-employee">
-                                    <option value="">All Employees</option>
-                                </select>
-                            </div>
-                            <div class="filter-group">
-                                <label for="filter-date-from">
-                                    <i class="fas fa-calendar"></i>
-                                    From Date
-                                </label>
-                                <input type="date" id="filter-date-from" class="date-filter">
-                            </div>
-                            <div class="filter-group">
-                                <label for="filter-date-to">
-                                    <i class="fas fa-calendar"></i>
-                                    To Date
-                                </label>
-                                <input type="date" id="filter-date-to" class="date-filter">
-                            </div>
-                            <div class="filter-actions">
-                                <button id="apply-date-filter" class="btn btn-primary btn-small">
-                                    <i class="fas fa-search"></i>
-                                    Apply Filter
-                                </button>
-                                <button id="clear-date-filter" class="btn btn-secondary btn-small">
-                                    <i class="fas fa-times"></i>
-                                    Clear
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="table-container">
-                        <table id="attendance-table" class="table">
-                            <thead>
-                                <tr>
-                                    <th>Employee ID</th>
-                                    <th>Employee Name</th>
-                                    <th>Date</th>
-                                    <th>Status</th>
-                                    <th>Recorded At</th>
-                                </tr>
-                            </thead>
-                            <tbody id="attendance-tbody">
-                                <!-- Attendance rows will be populated here -->
-                            </tbody>
-                        </table>
-                        <div id="attendance-empty" class="empty-state hidden">
-                            <i class="fas fa-calendar-times"></i>
-                            <h3>No attendance records found</h3>
-                            <p>Start marking attendance using the form above</p>
-                        </div>
-                    </div>
-                    <!-- Pagination for Attendance -->
-                    <div id="attendance-pagination" class="pagination-container hidden">
-                        <div class="pagination-info">
-                            <span id="attendance-pagination-info">Showing 0 of 0 records</span>
-                        </div>
-                        <div class="pagination-controls">
-                            <button id="attendance-prev-btn" class="pagination-btn" disabled>
-                                <i class="fas fa-chevron-left"></i>
-                                Previous
-                            </button>
-                            <div id="attendance-page-numbers" class="page-numbers"></div>
-                            <button id="attendance-next-btn" class="pagination-btn" disabled>
-                                Next
-                                <i class="fas fa-chevron-right"></i>
-                            </button>
-                        </div>
+                    <div class="activity-feed" id="recent-activity-list"></div>
+                    <div id="recent-activity-empty" class="empty-state hidden">
+                        <div class="empty-icon"><i class="fas fa-clock"></i></div>
+                        <h3>No recent activity</h3>
+                        <p>Attendance records will appear here</p>
                     </div>
                 </div>
             </div>
-        </main>
-    </div>
+        </section>
 
-    <!-- Confirmation Modal -->
-    <div id="confirm-modal" class="modal hidden">
-        <div class="modal-backdrop"></div>
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fas fa-exclamation-triangle"></i> Confirm Action</h3>
-                <button class="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p id="confirm-message"></p>
-            </div>
-            <div class="modal-actions">
-                <button id="confirm-yes" class="btn btn-danger">
-                    <i class="fas fa-trash"></i>
-                    Yes, Delete
+        <!-- ── EMPLOYEES TAB ── -->
+        <section class="tab-panel" id="employees-tab">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Employees</h1>
+                    <p class="page-sub">Manage your workforce</p>
+                </div>
+                <button class="btn btn-primary" id="toggle-add-employee">
+                    <i class="fas fa-plus"></i> Add Employee
                 </button>
-                <button id="confirm-no" class="btn btn-secondary">
-                    <i class="fas fa-times"></i>
-                    Cancel
+            </div>
+
+            <!-- Add employee form (collapsible) -->
+            <div class="card collapsible-card" id="add-employee-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-user-plus"></i> New Employee</h2>
+                </div>
+                <form id="employee-form" class="form-grid">
+                    <div class="field">
+                        <label for="employee-id"><i class="fas fa-id-badge"></i> Employee ID</label>
+                        <input type="text" id="employee-id" name="employee_id" required placeholder="e.g. EMP001" autocomplete="off">
+                    </div>
+                    <div class="field">
+                        <label for="full-name"><i class="fas fa-user"></i> Full Name</label>
+                        <input type="text" id="full-name" name="full_name" required placeholder="e.g. Jane Smith" autocomplete="off">
+                    </div>
+                    <div class="field">
+                        <label for="email"><i class="fas fa-envelope"></i> Email</label>
+                        <input type="email" id="email" name="email" required placeholder="jane@company.com" autocomplete="off">
+                    </div>
+                    <div class="field">
+                        <label for="department"><i class="fas fa-building"></i> Department</label>
+                        <input type="text" id="department" name="department" required placeholder="e.g. Engineering" autocomplete="off">
+                    </div>
+                    <div class="field field-full form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Add Employee
+                        </button>
+                        <button type="button" class="btn btn-ghost" id="cancel-add-employee">Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Employee list -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-list"></i> Employee List</h2>
+                    <div class="search-box">
+                        <i class="fas fa-magnifying-glass"></i>
+                        <input type="text" id="employee-search" placeholder="Search employees…">
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table class="table" id="employees-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Department</th>
+                                <th>Joined</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="employees-tbody"></tbody>
+                    </table>
+                    <div id="employees-empty" class="empty-state hidden">
+                        <div class="empty-icon"><i class="fas fa-users"></i></div>
+                        <h3>No employees yet</h3>
+                        <p>Click "Add Employee" to get started</p>
+                    </div>
+                </div>
+                <div id="employees-pagination" class="pagination hidden">
+                    <span id="employees-pagination-info" class="pagination-info"></span>
+                    <div class="pagination-controls">
+                        <button id="employees-prev-btn" class="pg-btn" disabled><i class="fas fa-chevron-left"></i></button>
+                        <div id="employees-page-numbers" class="page-numbers"></div>
+                        <button id="employees-next-btn" class="pg-btn" disabled><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── ATTENDANCE TAB ── -->
+        <section class="tab-panel" id="attendance-tab">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Attendance</h1>
+                    <p class="page-sub">Track daily attendance</p>
+                </div>
+                <button class="btn btn-primary" id="toggle-mark-attendance">
+                    <i class="fas fa-plus"></i> Mark Attendance
+                </button>
+            </div>
+
+            <!-- Mark attendance form -->
+            <div class="card collapsible-card" id="mark-attendance-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-calendar-plus"></i> Mark Attendance</h2>
+                </div>
+                <form id="attendance-form" class="form-grid">
+                    <div class="field">
+                        <label for="attendance-employee"><i class="fas fa-user"></i> Employee</label>
+                        <div class="select-wrap full">
+                            <i class="fas fa-chevron-down"></i>
+                            <select id="attendance-employee" name="employee_id" required>
+                                <option value="">Select Employee</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="attendance-date"><i class="fas fa-calendar"></i> Date</label>
+                        <input type="date" id="attendance-date" name="date" required>
+                    </div>
+                    <div class="field">
+                        <label for="attendance-status"><i class="fas fa-circle-check"></i> Status</label>
+                        <div class="select-wrap full">
+                            <i class="fas fa-chevron-down"></i>
+                            <select id="attendance-status" name="status" required>
+                                <option value="">Select Status</option>
+                                <option value="Present">Present</option>
+                                <option value="Absent">Absent</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="field field-full form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-check"></i> Mark Attendance
+                        </button>
+                        <button type="button" class="btn btn-ghost" id="cancel-mark-attendance">Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Attendance records -->
+            <div class="card">
+                <div class="card-header card-header-wrap">
+                    <h2><i class="fas fa-table-list"></i> Records</h2>
+                    <div class="filter-bar">
+                        <div class="select-wrap">
+                            <i class="fas fa-user"></i>
+                            <select id="filter-employee">
+                                <option value="">All Employees</option>
+                            </select>
+                        </div>
+                        <input type="date" id="filter-date-from" class="date-input" title="From date">
+                        <span class="filter-sep">→</span>
+                        <input type="date" id="filter-date-to" class="date-input" title="To date">
+                        <button id="apply-date-filter" class="btn btn-primary btn-sm">
+                            <i class="fas fa-filter"></i> Filter
+                        </button>
+                        <button id="clear-date-filter" class="btn btn-ghost btn-sm">
+                            <i class="fas fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table class="table" id="attendance-table">
+                        <thead>
+                            <tr>
+                                <th>Employee ID</th>
+                                <th>Name</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Recorded</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendance-tbody"></tbody>
+                    </table>
+                    <div id="attendance-empty" class="empty-state hidden">
+                        <div class="empty-icon"><i class="fas fa-calendar-xmark"></i></div>
+                        <h3>No records found</h3>
+                        <p>Mark attendance using the form above</p>
+                    </div>
+                </div>
+                <div id="attendance-pagination" class="pagination hidden">
+                    <span id="attendance-pagination-info" class="pagination-info"></span>
+                    <div class="pagination-controls">
+                        <button id="attendance-prev-btn" class="pg-btn" disabled><i class="fas fa-chevron-left"></i></button>
+                        <div id="attendance-page-numbers" class="page-numbers"></div>
+                        <button id="attendance-next-btn" class="pg-btn" disabled><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Delete confirmation modal -->
+    <div class="modal-overlay hidden" id="confirm-modal">
+        <div class="modal">
+            <div class="modal-icon"><i class="fas fa-triangle-exclamation"></i></div>
+            <h3 class="modal-title">Confirm Delete</h3>
+            <p class="modal-body" id="confirm-message"></p>
+            <div class="modal-footer">
+                <button id="confirm-no" class="btn btn-ghost">Cancel</button>
+                <button id="confirm-yes" class="btn btn-danger">
+                    <i class="fas fa-trash"></i> Delete
                 </button>
             </div>
         </div>
