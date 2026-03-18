@@ -14,12 +14,13 @@ SECRET_KEY = os.environ.get(
     "django-insecure-5$%w5%tqm_x9ydya$w%5_hinwhtacv3vkd0r*udx)!qx-twdg"
 )
 
-DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
+DEBUG = os.environ.get("DEBUG", "True").lower() == "true"
 
 ALLOWED_HOSTS = [
     "hrms-gvc4.onrender.com",
     "localhost",
     "127.0.0.1",
+    "*",
 ]
 
 
@@ -141,8 +142,8 @@ REST_FRAMEWORK = {
 }
 
 
-# SECURITY SETTINGS FOR PRODUCTION
-if not DEBUG:
+# SECURITY SETTINGS FOR PRODUCTION (only on Render, not local)
+if not DEBUG and os.environ.get("DATABASE_URL"):
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
